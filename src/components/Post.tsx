@@ -1,12 +1,30 @@
 import { format, formatDistanceToNow } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
-import { useState } from 'react';
+import { ChangeEvent, FormEvent, InvalidEvent, useState } from 'react';
 
 import { Avatar } from './Avatar';
 import { Comment } from './Comment';
 import styles from './Post.module.css';
 
-export function Post({ author, content, publishedAt }) {
+interface PostProps {
+    author: Author;
+    content: Array<Content>;
+    publishedAt: Date;
+}
+
+interface Author {
+    name: string;
+    role: string;
+    avatar_url: string;
+}
+
+interface Content {
+    id: number;
+    type: 'paragraph' | 'link';
+    content: string;
+}
+
+export function Post({ author, content, publishedAt }: PostProps) {
 
     const [comments, setComments] = useState([{
         id: 1,
@@ -19,8 +37,8 @@ export function Post({ author, content, publishedAt }) {
     const formattedDate = format(publishedAt, "d 'de' MMMM 'às' HH:mm'h'", { locale: ptBR });
     const publishedAtDistance = formatDistanceToNow(publishedAt, { locale: ptBR, addSuffix: true });
 
-    function handleCreateNewComment(event) {
-        event.preventDefault();
+    function handleCreateNewComment(event: FormEvent) {
+        event.preventDefault()
 
         setComments([...comments, {
             id: 2,
@@ -31,11 +49,16 @@ export function Post({ author, content, publishedAt }) {
         setNewCommentText('')
     }
 
-    function handleNewCommentChange() {
+    function handleNewCommentChange(event: ChangeEvent<HTMLTextAreaElement>) {
+        event.target.setCustomValidity('')
         setNewCommentText(event.target.value);
     }
 
-    function deleteComment(idComment) {
+    function handleNewcommentInvalid(event: InvalidEvent<HTMLTextAreaElement>) {
+        event.target.setCustomValidity('O campo de comentário não pode estar vazio')
+    }
+
+    function deleteComment(idComment: number) {
         const commentsWithoutDeleted = comments.filter(comentario => {
             return comentario.id !== idComment
         })
@@ -43,16 +66,8 @@ export function Post({ author, content, publishedAt }) {
         setComments(commentsWithoutDeleted)
     }
 
-    function handleNewcommentInvalid() {
-        if (newCommentText.length === 0) {
-            event.target.setCustomValidity('O campo de comentário não pode estar vazio')
-        }else{
-            event.target.setCustomValidity('')
-        }
-    }
-
     const isNewCommentEmpty = newCommentText.length === 0;
-    
+
     return (
         <article className={styles.post}>
             <header>
@@ -64,7 +79,7 @@ export function Post({ author, content, publishedAt }) {
                     </div>
                 </div>
 
-                <time className={styles.date} dateTime={publishedAt} title={formattedDate}>
+                <time className={styles.date} dateTime={publishedAt.toISOString()} title={formattedDate}>
                     {publishedAtDistance}
                 </time>
             </header>

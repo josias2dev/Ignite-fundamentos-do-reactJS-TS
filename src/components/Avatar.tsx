@@ -1,6 +1,12 @@
 import Styles from './Avatar.module.css';
 
-export function Avatar({ hasBorder = true, src, alt }) {
+interface AvatarProps {
+    hasBorder?: boolean;
+    src: string;
+    alt?: string;
+}
+
+export function Avatar({ hasBorder = true, src, alt }: AvatarProps) {
 
     return (
 

@@ -6,7 +6,14 @@ import { format, formatDistanceToNow } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import { useState } from 'react';
 
-export function Comment({ id, content, publishedAt = new Date(), onDeleteComment }) {
+interface CommentProps {
+  id: number;
+  content: string;
+  publishedAt?: Date;
+  onDeleteComment: (id: number) => void;
+}
+
+export function Comment({ id, content, publishedAt = new Date(), onDeleteComment }: CommentProps) {
 
   const formattedDate = format(publishedAt, "d 'de' MMMM 'às' HH:mm'h'", { locale: ptBR });
   const publishedAtDistance = formatDistanceToNow(publishedAt, { locale: ptBR, addSuffix: true });
@@ -30,7 +37,7 @@ export function Comment({ id, content, publishedAt = new Date(), onDeleteComment
           <header>
             <div className={styles.authorAndTime}>
               <strong>Josias Ribeiro</strong>
-              <time title={formattedDate} dateTime={publishedAt}>{publishedAtDistance}</time>
+              <time title={formattedDate} dateTime={publishedAt.toISOString()}>{publishedAtDistance}</time>
             </div>
 
             <button
