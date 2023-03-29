@@ -6,12 +6,6 @@ import { Avatar } from './Avatar';
 import { Comment } from './Comment';
 import styles from './Post.module.css';
 
-interface PostProps {
-    author: Author;
-    content: Array<Content>;
-    publishedAt: Date;
-}
-
 interface Author {
     name: string;
     role: string;
@@ -24,7 +18,18 @@ interface Content {
     content: string;
 }
 
-export function Post({ author, content, publishedAt }: PostProps) {
+export interface PostType {
+    id: number;
+    author: Author;
+    content: Array<Content>;
+    publishedAt: Date;
+}
+
+interface PostProps {
+    post: PostType;
+}
+
+export function Post({ post }: PostProps) {
 
     const [comments, setComments] = useState([{
         id: 1,
@@ -34,8 +39,8 @@ export function Post({ author, content, publishedAt }: PostProps) {
 
     const [newCommentText, setNewCommentText] = useState('');
 
-    const formattedDate = format(publishedAt, "d 'de' MMMM 'às' HH:mm'h'", { locale: ptBR });
-    const publishedAtDistance = formatDistanceToNow(publishedAt, { locale: ptBR, addSuffix: true });
+    const formattedDate = format(post.publishedAt, "d 'de' MMMM 'às' HH:mm'h'", { locale: ptBR });
+    const publishedAtDistance = formatDistanceToNow(post.publishedAt, { locale: ptBR, addSuffix: true });
 
     function handleCreateNewComment(event: FormEvent) {
         event.preventDefault()
@@ -72,21 +77,21 @@ export function Post({ author, content, publishedAt }: PostProps) {
         <article className={styles.post}>
             <header>
                 <div className={styles.author}>
-                    <Avatar src={author.avatar_url} alt="Foto de perfil" />
+                    <Avatar src={post.author.avatar_url} alt="Foto de perfil" />
                     <div className={styles.authorInfo}>
-                        <strong>{author.name}</strong>
-                        <span>{author.role}</span>
+                        <strong>{post.author.name}</strong>
+                        <span>{post.author.role}</span>
                     </div>
                 </div>
 
-                <time className={styles.date} dateTime={publishedAt.toISOString()} title={formattedDate}>
+                <time className={styles.date} dateTime={post.publishedAt.toISOString()} title={formattedDate}>
                     {publishedAtDistance}
                 </time>
             </header>
 
             <div className={styles.content}>
                 {
-                    content.map(content => {
+                    post.content.map(content => {
                         if (content.type === 'paragraph') {
                             return <p key={content.id}>{content.content}</p>
                         }

@@ -1,5 +1,5 @@
 import { Header } from './components/Header';
-import { Post } from './components/Post';
+import { Post, PostType } from './components/Post';
 
 import './components/Global.css';
 import styles from './App.module.css';
@@ -10,7 +10,7 @@ enum ContentType {
   Link = "link"
 }
 
-const posts = [
+const posts: PostType[] = [
   {
     id: 1,
     author: {
@@ -50,7 +50,7 @@ export function App() {
         <Sidebar />
 
         <main>
-          {posts.map(post => <Post key={post.id} {...post} />)}
+          {posts.map(post => <Post key={post.id} post={post} />)}
         </main>
       </div>
 
